@@ -21,7 +21,7 @@ def add_user(name, email, age=None):
      sql = ('INSERT INTO users(name, email, age) VALUES(%s, %s, %s) RETURNING id;')
      connection = db_connection()
      if connection is None:
-         return
+         return None
      try:
          with connection: #оч полезная штука, менеджер контекста
              with connection.cursor() as cursor:
@@ -36,7 +36,7 @@ def add_user(name, email, age=None):
 def read_user(user_id=None, name=None):
     connection = db_connection()
     if connection is None:
-        return
+        return None
     try:
         with connection.cursor() as cursor:
             if user_id:
@@ -50,7 +50,7 @@ def read_user(user_id=None, name=None):
 
             if not users:
                 print('user not found')
-                return
+                return None
             print(f'{'ID':<5}{'NAME:<20'}{'EMAIL':<30}{'AGE':<5}{'ACTIVE':<10}{'CREATED AT'}')
             print('-'*85)
             for user in users:
@@ -63,4 +63,35 @@ def read_user(user_id=None, name=None):
 def update_user(user_id, new_name=None, new_email=None, is_active=None, age=None):
     updates = []
     params = []
-    
+    if new_name:
+        updates.append('name = %s')
+        params.append(new_name)
+    if new_email:
+        updates.append('email = %s')
+        params.append(new_email)
+    if is_active is not None:
+        updates.append()
+        params.append(is_active)
+    if age is not None:
+        updates.append('age = %s')
+        params.append(age)
+    if not updates:
+        print('no updates')
+        return None
+    params.append(user_id)
+    sql = f'UPDATE users SET {','.join(updates)} WHERE id=%s;'
+    connection = db_connection()
+    if connection is None:
+        return None
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql, tuple(params))
+                if cursor.rowcount == 0:
+                    print(f'user from ID {user_id} not found')
+                else:
+                    print(f'user from ID {user_id} successfully updated')
+    except psycopg2.IntegrityError:
+        print(f'user from ID {user_id} already exists')
+    finally:
+        connection.close()
