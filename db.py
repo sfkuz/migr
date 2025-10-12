@@ -95,3 +95,58 @@ def update_user(user_id, new_name=None, new_email=None, is_active=None, age=None
         print(f'user from ID {user_id} already exists')
     finally:
         connection.close()
+
+def delete_user(user_id):
+    sql = f'DELETE FROM users WHERE id=%s;'
+    connection = db_connection()
+    if connection is None:
+        return None
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(sql, (user_id,))
+            if cursor.rowcount == 0:
+                print(f'user from ID {user_id} not found')
+            else:
+                print(f'user from ID {user_id} successfully deleted')
+    connection.close()
+
+def main():
+    parser = argparse.ArgumentParser(description='Database manipulation')
+    subparsers = parser.add_subparsers(dest = 'command', help = 'available commands')
+
+    #add
+    parser_add = subparsers.add_parser('add', help='Добавить нового пользователя')
+    parser_add.add_argument('--username', type=str, required=True, help='Имя пользователя')
+    parser_add.add_argument('--email', type=str, required=True, help='Email пользователя')
+    parser_add.add_argument('--age', type=int, help='Возраст пользователя')
+
+    #read
+    parser_get = subparsers.add_parser('get', help='Получить пользователей')
+    parser_get.add_argument('--id', type=int, help='ID пользователя для поиска')
+    parser_get.add_argument('--username', type=str, help='Имя пользователя для поиска')
+
+    #update
+    parser_update = subparsers.add_parser('update', help='Обновить пользователя')
+    parser_update.add_argument('--id', type=int, required=True, help='ID пользователя для обновления')
+    parser_update.add_argument('--new-username', type=str, help='Новое имя пользователя')
+    parser_update.add_argument('--new-email', type=str, help='Новый email')
+    parser_update.add_argument('--is-active', type=lambda x: (str(x).lower() == 'true'), help='Статус активности (true/false)')
+    parser_update.add_argument('--age', type=int, help='Новый возраст пользователя')
+
+    #delete
+    parser_delete = subparsers.add_parser('delete', help='Удалить пользователя')
+    parser_delete.add_argument('--id', type=int, required=True, help='ID пользователя для удаления')
+
+    args = parser.parse_args()
+
+    if args.command == 'add':
+        add_user(args.username, args.email, args.age)
+    elif args.command == 'read':
+        read_user(args.id, args.name)
+    elif args.command == 'update':
+        update_user(args.id, args.new_username, args.new_email, args.is_active, args.age)
+    elif args.command == 'delete':
+        delete_user(args.id)
+
+if __name__ == '__main__':
+    main()
