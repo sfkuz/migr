@@ -60,12 +60,12 @@ def read_user(user_id=None, name=None):
             if not users:
                 print('user not found')
                 return None
-            print(f'{'ID':<5}{'NAME:<20'}{'EMAIL':<30}{'AGE':<5}{'ACTIVE':<10}{'CREATED AT'}')
-            print('-'*85)
+            print(f"{'ID':<5}{'NAME':<20}{'EMAIL':<30}{'AGE':<5}{'ACTIVE':<10}{'CREATED AT':<20}")
+            print('-'*90)
             for user in users:
                 user_id, name, email, age, is_active, created_at = user
                 age_display = age if age is not None else ''
-                print(f"{user_id:<5}{name:<20}{email:<30}{str(age_display):<5}{str(is_active):<10}{created_at.strftime('%Y-%m-%d %H:%M')}")
+                print(f"{user_id:<5}{name:<20}{email:<30}{str(age_display):<5}{str(is_active):<10}{created_at.strftime('%Y-%m-%d %H:%M'):<20}")
     finally:
         connection.close()
 
@@ -163,4 +163,4 @@ if __name__ == '__main__':
     main()
 
 
-# TODO: 1.имя capitalize(), 2.проверка действительно ли email, 3.проверка возраста 4. разбить функции по разным файлам 
+# TODO: 1.имя capitalize(), 2.проверка действительно ли email, 3.проверка возраста 4. разбить функции по разным файлам
