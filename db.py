@@ -89,7 +89,7 @@ def update_user(user_id, new_name=None, new_email=None, is_active=None, age=None
         return None
 
     params.append(user_id)
-    
+
     sql = f'UPDATE users SET {','.join(updates)} WHERE id=%s;'
     connection = db_connection()
     if connection is None:
@@ -163,4 +163,4 @@ if __name__ == '__main__':
     main()
 
 
-# TODO: 1.имя capitalize(), 2.проверка действительно ли email, 3.проверка возраста
+# TODO: 1.имя capitalize(), 2.проверка действительно ли email, 3.проверка возраста 4. разбить функции по разным файлам 
