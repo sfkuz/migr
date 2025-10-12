@@ -1,1 +1,2 @@
-import psycopg2, argparse
+import psycopg2
+
