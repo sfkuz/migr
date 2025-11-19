@@ -7,6 +7,8 @@ load_dotenv()  # находит файл env и делает его переме
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 
+# todo class psycopg2.pool.SimpleConnectionPool, https://www.psycopg.org/docs/pool.html
+# https://refactoring.guru/design-patterns/singleton just read
 def db_connection():  # конект с бд
     try:
         connection = psycopg2.connect(DATABASE_URL)
@@ -30,10 +32,9 @@ def add_user(name, email, age=None):
                  print(f'user "{name}" successfully added from ID: "{user_id}"')
      except psycopg2.IntegrityError: # ошибка вылазит при уже существующем пользователе
          print(f'error: a user with that email already exists')
-     finally:
-        connection.close()
 
-def read_user(user_id=None, name=None):
+# get_user_by_id, get_user_by_name
+def read_user(user_id=None, name=None, surename=None, subject=None):
     connection = db_connection()
     if connection is None:
         return None
@@ -49,11 +50,11 @@ def read_user(user_id=None, name=None):
             # users = cursor.fetchall() # забрать ответ
             sql_query = 'SELECT id, name, email, age, is_active, created_at FROM users'
             if user_id:
-                cursor.execute(f'{sql_query} WHERE id=%s;', (user_id,))
+                cursor.exec ute(f'{sql_query} WHERE id=%s;', (user_id,))
             elif name:
-                cursor.execute(f'{sql_query} WHERE name=%s;', (name,))
+                cursor.exec ute(f'{sql_query} WHERE name=%s;', (name,))
             else:
-                cursor.execute(f'{sql_query} ORDER BY id;')
+                cursor.exec ute(f'{sql_query} ORDER BY id;')
 
             users = cursor.fetchall()
 
@@ -79,7 +80,7 @@ def update_user(user_id, new_name=None, new_email=None, is_active=None, age=None
         updates.append('email = %s')
         params.append(new_email)
     if is_active is not None:
-        updates.append()
+        updates.append() # todo почему пусто?
         params.append(is_active)
     if age is not None:
         updates.append('age = %s')
@@ -161,6 +162,5 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
 # TODO: 1.имя capitalize(), 2.проверка действительно ли email, 3.проверка возраста 4. разбить функции по разным файлам
