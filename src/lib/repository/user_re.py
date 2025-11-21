@@ -21,7 +21,7 @@ def add_user(name: str, email: str, age: int = None) -> int:   # добавит�
     finally:
         db_pool.release_connection(connection)
 
-def find_users_by(user_id: int = None, name: str = None) -> list[dict]: # найти юзера
+def read_user(user_id: int = None, name: str = None) -> list[dict]: # найти юзера
     sql_query = 'SELECT id, name, email, age, is_active, created_at FROM users'
     params = ()
 
