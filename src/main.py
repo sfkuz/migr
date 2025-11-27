@@ -4,9 +4,9 @@ import argparse
 from typing import List
 
 # Импорт сервиса, схем и кастомных ошибок
-from services.user_se import user_service
-from schemas.user_she import User, UserCreate, UserUpdate
-from repository.user_re import UserAlreadyExistsError
+from lib.services.user_se import user_service
+from lib.schemas.user_she import User, UserCreate, UserUpdate
+from lib.repository.user_re import UserAlreadyExistsError
 
 
 def print_users(users: List[User]):   # красивенький вывод
@@ -84,5 +84,5 @@ def main():
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
-    if __name__ == '__main__':
-        main()
+if __name__ == '__main__':
+    main()

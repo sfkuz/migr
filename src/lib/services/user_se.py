@@ -1,9 +1,9 @@
 # берет schemas и вызывает функции из repository
 
 from typing import List, Optional
-from ..repository import user_re
-from ..repository.user_re import UserAlreadyExistsError
-from ..schemas.user_she import User, UserCreate, UserUpdate
+from lib.repository import user_re
+from lib.repository.user_re import UserAlreadyExistsError
+from lib.schemas.user_she import User, UserCreate, UserUpdate
 
 class UserService:
     def add_user(self, user_data: UserCreate) -> User:
