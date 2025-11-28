@@ -1,6 +1,5 @@
 .env
 .idea/
 .DS_Store
-db.py
 __pycache__/
 *.pyc
