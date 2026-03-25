@@ -1,18 +1,32 @@
-import psycopg2
-from psycopg2 import pool
+import asyncio
+import asyncpg
 
 from lib.config.config import DATABASE_URL
 
-# Singleton уже встроен в питон
-try:
-    connection_pool = pool.SimpleConnectionPool(
-        1, 10, dsn=DATABASE_URL)
-except psycopg2.OperationalError as e:
-    print(f"error creating connection pool: {e}")
-    connection_pool = None
+POOL = None
 
-def get_connection():
-    return connection_pool.getconn()
+async def create_pool():
+    global POOL
+    if POOL is None:
+        try:
+            POOL = await asyncpg.create_pool(
+                dsn=DATABASE_URL,
+                min_size=1,
+                max_size=10
+            )
+            print("Connection pool created successfully.")
+        except Exception as e:
+            print(f"Error creating connection pool: {e}")
 
-def release_connection(conn):
-    connection_pool.putconn(conn)
+async def get_connection():
+    global POOL
+    if POOL is None:
+        await create_pool()
+    return POOL.acquire() # берет соединение из пула
+        # замена realise_connection поскольку asynco with делает это за нас
+
+async def close_pool():
+    global POOL
+    if POOL:
+        await POOL.close()
+        print("Connection pool closed.")
