@@ -7,7 +7,7 @@ class UserAlreadyExistsError(Exception):
     pass
 
 async def add_user(name: str, email: str, age: int = None) -> int:   # добавить юзера и глянуть айди
-    sql = 'INSERT INTO users(name, email, age) VALUES ($s, $s, $s) RETURNING id;'
+    sql = 'INSERT INTO users(name, email, age) VALUES ($1, $2, $3) RETURNING id;'
     async with await get_connection() as connection:
         try:
             user_id = await connection.fetchval(sql, name, email, age)
@@ -18,14 +18,14 @@ async def add_user(name: str, email: str, age: int = None) -> int:   # доба�
 
 async def read_user(user_id: int = None, name: str = None) -> list[dict]: # найти юзера
     sql_query = 'SELECT id, name, email, age, is_active, created_at FROM users'
-    params = ()
+    params = []
 
     if user_id is not None:
-        sql_query += ' WHERE id = $s'
-        params = (user_id,)
+        sql_query += ' WHERE id = $1'
+        params.append(user_id)
     elif name is not None:
-        sql_query += ' WHERE name = $s'
-        params = (name,)
+        sql_query += ' WHERE name = $1'
+        params.append(name)
 
     async with await get_connection() as connection:
         records = await connection.fetch(sql_query, *params)
@@ -50,7 +50,7 @@ async def update_user(user_id: int, updates: dict) -> int:
 
 
 async def delete_user(user_id: int) -> int: # удаление !!!
-    sql = f'DELETE FROM users WHERE id = $s;'
+    sql = f'DELETE FROM users WHERE id = $1;'
     async with await get_connection() as connection:
         status = await connection.execute(sql, user_id)
         return int(status.split(' ')[1])

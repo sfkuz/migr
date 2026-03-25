@@ -13,7 +13,7 @@ class UserService:
                 email=user_data.email,
                 age=user_data.age
             )
-            user_dict = await user_re.read_user(user_id=user_id)[0] # получить данные нового юзера
+            user_dict = await user_re.read_user(user_id=user_id) # получить данные нового юзера
             return User(**user_dict[0])  # Создать Pydantic модель из словаря
         except UserAlreadyExistsError as e:
             print(f"Service layer caught an error: {e}")

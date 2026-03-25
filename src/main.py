@@ -55,7 +55,7 @@ async def menu():
                 else:
                     name_input = input("Enter user name to search (leave blank to show all users): ").strip()
                     if not name_input:
-                        users = user_service.read_user(None, None)
+                        users = await user_service.read_user(None, None)
                         print_users(users)
                         continue
                 users = await user_service.read_user(user_id, name=name_input)
@@ -103,10 +103,14 @@ async def menu():
             print(f"An unexpected error occurred: {e}")
 
 
+async def start():
+    try:
+        await menu()
+    finally:
+        await close_pool()
+
 if __name__ == '__main__':
     try:
-        asyncio.run(menu())
+        asyncio.run(start())
     except KeyboardInterrupt:
         print("\nProgram interrupted. Exiting...")
-    finally:
-        asyncio.run(close_pool())
