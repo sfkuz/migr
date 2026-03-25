@@ -1,11 +1,12 @@
 # ниц не должен знать про sql
 from typing import List
-from datetime import datetime
+import asyncio
 
 # Импорт сервиса, схем и кастомных ошибок
 from lib.services.user_se import user_service
 from lib.schemas.user_she import User, UserCreate, UserUpdate
 from lib.repository.user_re import UserAlreadyExistsError
+from lib.database.connection import close_pool
 
 
 def print_users(users: List[User]):
@@ -21,7 +22,7 @@ def print_users(users: List[User]):
               f"{str(user.is_active):<10}{created_at_display:<20}")
 
 
-def menu():
+async def menu():
     while True:
         print("\n=== User Management Menu ===")
         print("1. Add User")
@@ -40,7 +41,7 @@ def menu():
                 age = int(age) if age else None
 
                 user_data = UserCreate(name=name, email=email, age=age)
-                new_user = user_service.add_user(user_data)
+                new_user = await user_service.add_user(user_data)
                 print(f"User '{new_user.name}' with ID {new_user.id} was successfully created.")
 
 
@@ -57,7 +58,7 @@ def menu():
                         users = user_service.read_user(None, None)
                         print_users(users)
                         continue
-                users = user_service.read_user(user_id, name=name_input)
+                users = await user_service.read_user(user_id, name=name_input)
 
                 print_users(users)
 
@@ -73,7 +74,7 @@ def menu():
                 age = int(age_input) if age_input else None
 
                 updated_data = UserUpdate(name=new_name, email=new_email, is_active=is_active, age=age)
-                updated_user = user_service.update_user(user_id, updated_data)
+                updated_user = await user_service.update_user(user_id, updated_data)
                 if updated_user:
                     print(f"User with ID {updated_user.id} was successfully updated:")
                     print_users([updated_user])
@@ -82,7 +83,7 @@ def menu():
 
             elif choice == '4':
                 user_id = int(input("Enter user ID to delete: ").strip())
-                success = user_service.delete_user(user_id)
+                success = await user_service.delete_user(user_id)
                 if success:
                     print(f"User with ID {user_id} successfully deleted.")
                 else:
@@ -103,4 +104,9 @@ def menu():
 
 
 if __name__ == '__main__':
-    menu()
+    try:
+        asyncio.run(menu())
+    except KeyboardInterrupt:
+        print("\nProgram interrupted. Exiting...")
+    finally:
+        asyncio.run(close_pool())
