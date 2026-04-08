@@ -6,5 +6,5 @@ from app.runtime import run
 def main() -> None:
     asyncio.run(run())
 
-if name == "__main__":
+if __name__ == "__main__":
     main()
