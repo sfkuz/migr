@@ -22,8 +22,7 @@ async def get_connection():
     global POOL
     if POOL is None:
         await create_pool()
-    return POOL.acquire() # берет соединение из пула
-        # замена realise_connection поскольку asynco with делает это за нас
+    return POOL.acquire()
 
 async def close_pool():
     global POOL

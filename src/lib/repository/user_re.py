@@ -1,12 +1,12 @@
 import asyncpg
 from lib.database.connection import get_connection
 
-ALLOWED_FIELDS = {"name", "email", "age", "is_active"} # чтобы проверять правильность введенных значений
+ALLOWED_FIELDS = {"name", "email", "age", "is_active"}
 
 class UserAlreadyExistsError(Exception):
     pass
 
-async def add_user(name: str, email: str, age: int = None) -> int:   # добавить юзера и глянуть айди
+async def add_user(name: str, email: str, age: int = None) -> int:
     sql = 'INSERT INTO users(name, email, age) VALUES ($1, $2, $3) RETURNING id;'
     async with await get_connection() as connection:
         try:
@@ -16,7 +16,7 @@ async def add_user(name: str, email: str, age: int = None) -> int:   # доба�
             raise UserAlreadyExistsError(f'User with email "{email}" already exists')
 
 
-async def read_user(user_id: int = None, name: str = None) -> list[dict]: # найти юзера
+async def read_user(user_id: int = None, name: str = None) -> list[dict]:
     sql_query = 'SELECT id, name, email, age, is_active, created_at FROM users'
     params = []
 
@@ -49,7 +49,7 @@ async def update_user(user_id: int, updates: dict) -> int:
             raise
 
 
-async def delete_user(user_id: int) -> int: # удаление !!!
+async def delete_user(user_id: int) -> int:
     sql = f'DELETE FROM users WHERE id = $1;'
     async with await get_connection() as connection:
         status = await connection.execute(sql, user_id)

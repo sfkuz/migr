@@ -1,8 +1,7 @@
-# ниц не должен знать про sql
 from typing import List
 import asyncio
+from app.runtime import run
 
-# Импорт сервиса, схем и кастомных ошибок
 from lib.services.user_se import user_service
 from lib.schemas.user_she import User, UserCreate, UserUpdate
 from lib.repository.user_re import UserAlreadyExistsError
@@ -109,8 +108,8 @@ async def start():
     finally:
         await close_pool()
 
-if __name__ == '__main__':
-    try:
-        asyncio.run(start())
-    except KeyboardInterrupt:
-        print("\nProgram interrupted. Exiting...")
+def main() -> None:
+    asyncio.run(run())
+
+if __name__ == "__main__":
+    main()

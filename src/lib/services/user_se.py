@@ -1,5 +1,3 @@
-# берет schemas и вызывает функции из repository
-
 from typing import List, Optional
 from lib.repository import user_re
 from lib.repository.user_re import UserAlreadyExistsError
@@ -13,8 +11,8 @@ class UserService:
                 email=user_data.email,
                 age=user_data.age
             )
-            user_dict = await user_re.read_user(user_id=user_id) # получить данные нового юзера
-            return User(**user_dict[0])  # Создать Pydantic модель из словаря
+            user_dict = await user_re.read_user(user_id=user_id)
+            return User(**user_dict[0])
         except UserAlreadyExistsError as e:
             print(f"Service layer caught an error: {e}")
             raise e
