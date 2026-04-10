@@ -1,3 +1,12 @@
+CREATE SCHEMA IF NOT EXISTS app_private;
+CREATE OR REPLACE FUNCTION app_private.set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE TABLE events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT NOT NULL,
@@ -14,17 +23,17 @@ CREATE TABLE events (
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
-    CREATE INDEX id_events_start_at ON events(start_at)
-    CREATE INDEX id_events_event_type ON events(event_type)
-
     CONSTRAINT events_title_not_blank CHECK (btrim(title) <> ''),
     CONSTRAINT events_organizer_not_blank CHECK (btrim(organizer_name) <> ''),
     CONSTRAINT events_url_not_blank CHECK (btrim(url) <> ''),
     CONSTRAINT events_dates_check CHECK (end_at is null or end_at > start_at),
-    CONSTRAINT events_price_positive CHECK (price is null or price >= 0),
+    CONSTRAINT events_price_positive CHECK (price is null or price >= 0)
+);
 
-    CREATE TRIGGER trg_event_set_updated_at
-    BEFORE UPDATE ON events
-    FOR EACH ROW
-    EXECUTE FUNCTION app_private.set_updated_at();
-)
+CREATE INDEX id_events_start_at ON events(start_at);
+CREATE INDEX id_events_event_type ON events(event_type);
+
+CREATE TRIGGER trg_event_set_updated_at
+BEFORE UPDATE ON events
+FOR EACH ROW
+EXECUTE FUNCTION app_private.set_updated_at();
