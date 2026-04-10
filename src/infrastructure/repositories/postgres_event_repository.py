@@ -5,7 +5,7 @@ from datetime import datetime
 
 import asyncpg
 from domain.events.entities import Event
-from domain.events.repositoris import IEventRepository
+from domain.events.repository import IEventRepository
 
 class PostgresEventRepository(IEventRepository):
     def __init__(self, pool: asyncpg.Pool) -> None:
