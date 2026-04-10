@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import datetime
 from abc import ABC, abstractmethod
-from tkinter import EventType
 from typing import Iterable, Sequence
 from uuid import UUID
 
