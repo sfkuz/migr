@@ -68,7 +68,7 @@ class PostgresEventRepository(IEventRepository):
 
     async def get_by_start_at(self, start_at: datetime) -> Sequence[Event]:
         query = "SELECT * FROM events WHERE start_at = $1 ORDER BY start_at DESC"
-        rows = await aelf.pool.fetch(query, start_at)
+        rows = await self.pool.fetch(query, start_at)
         return [self._map_to_domain(row) for row in rows]
 
     async def delete(self, event_id: UUID) -> None:
