@@ -27,7 +27,7 @@ class IEventRepository(ABC):
         ...
 
     @abstractmethod
-    async def find_by_event_type(self, event_type: EventType) -> Sequence[Event]:
+    async def find_by_event_type(self, event_type: str.lower()) -> Sequence[Event]:
         ...
 
     @abstractmethod
